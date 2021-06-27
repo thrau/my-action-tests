@@ -17,6 +17,6 @@ jobs:
       - name: Configure docker
         run: |
           sudo cat /etc/docker/daemon.json
-          bash -c 'echo "{ \"experimental\": \"true\" }" > /etc/docker/daemon.json
+          sudo bash -c 'echo "{ \"experimental\": \"true\" }" > /etc/docker/daemon.json'
           sudo systemctl restart docker
           make docker-build-base
