@@ -20,5 +20,4 @@ jobs:
           sudo systemctl stop docker.service
           sudo bash -c 'echo "{ \"cgroup-parent\": \"/actions_job\", \"experimental\": \"true\" }" >> /etc/docker/daemon.json'
           sudo cat /etc/docker/daemon.json
-          sudo systemctl start docker.service
           make docker-build-base
