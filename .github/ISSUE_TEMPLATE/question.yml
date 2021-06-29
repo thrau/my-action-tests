@@ -6,11 +6,11 @@ body:
 - type: markdown
   attributes:
     value: |
-      If you need real-time help, please join our [communit Slack](https://localstack-community.slack.com).
+      If you need real-time help, please join our [community Slack](https://localstack-community.slack.com).
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?
-    description: Please search to see if an issue already exists for the question you have, or your question is answered in the [Localstack Documentations](https://localstack.cloud/docs/).
+    description: Please search to see if an issue already exists for the question you have, or your question is answered in the [Localstack Documentation](https://localstack.cloud/docs/).
     options:
     - label: I have searched the existing issues and read the documentation
       required: true
