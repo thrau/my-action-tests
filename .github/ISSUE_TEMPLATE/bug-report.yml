@@ -1,8 +1,12 @@
 name: 🐞 Bug
 description: File a bug/issue
-title: "[BUG] <title>"
-labels: [Bug, Needs Triage]
+title: ""
+labels: [bug, needs triage]
 body:
+- type: markdown
+  attributes:
+    value: |
+      Thanks for taking the time to fill out this bug! If you need real-time help, join us in the community Slack.
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?
@@ -15,7 +19,7 @@ body:
     label: Current Behavior
     description: A concise description of what you're experiencing.
   validations:
-    required: false
+    required: true
 - type: textarea
   attributes:
     label: Expected Behavior
@@ -26,13 +30,17 @@ body:
   attributes:
     label: Steps To Reproduce
     description: Steps to reproduce the behavior.
-    placeholder: |
-      1. In this environment...
-      2. With this config...
-      3. Run '...'
-      4. See error...
+    value: |
+      ## Command used to start localstack
+      
+          docker run localstack/localstack
+      
+      ## Client commands (e.g., AWS SDK code snippet, or sequence of "awslocal" commands)
+      
+          awslocal s3 mb s3://mybucket
+
   validations:
-    required: false
+    required: true
 - type: textarea
   attributes:
     label: Environment
