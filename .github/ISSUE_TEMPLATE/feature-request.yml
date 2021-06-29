@@ -23,7 +23,7 @@ body:
 - type: textarea
   attributes:
     label: 🧑‍💻 Implementation
-    description: If you are a developer and have an idea how to implement it, please sketch it out here.
+    description: If you are a developer and have an idea how to implement this feature, please sketch it out here.
   validations:
     required: false
 - type: textarea
