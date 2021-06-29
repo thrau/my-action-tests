@@ -26,6 +26,16 @@ body:
     description: A concise description of what you expected to happen.
   validations:
     required: false
+- type: dropdown
+  attributes:
+    label: How are you starting LocalStack?
+    options:
+      - With a docker-compose file
+      - With a `docker run` command
+      - With the `localstack` script
+      - Custom (please describe below)
+  validations:
+    required: true
 - type: textarea
   attributes:
     label: Steps To Reproduce
