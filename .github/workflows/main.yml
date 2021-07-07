@@ -33,6 +33,6 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo ${{ github.workspace }}
-          echo $(pwd)
           ls -la
-          env
+          cd ..
+          ls -la
