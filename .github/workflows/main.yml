@@ -34,5 +34,8 @@ jobs:
         run: |
           echo ${{ github.workspace }}
           ls -la
+          git clone https://github.com/localstack/localstack ../localstack
           cd ..
+          ls -la
+          cd localstack
           ls -la
