@@ -20,7 +20,7 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     env:
-      LOCALSTACK_DIR: ${{ github.workspace }}/../localstack
+      LOCALSTACK_DIR: ${{ github.workspace }}/localstack
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -32,6 +32,8 @@ jobs:
           echo ${{ github.workspace }}
           ls -la
           env
+          which python || true
+          which python3 || true
 
       - name: Checkout localstack
         run: |
@@ -40,3 +42,15 @@ jobs:
           ln -s ${{ github.workspace }}/localstack_ext .
           ls -la
 
+      - name: Build localstack
+        run: |
+          cd ${LOCALSTACK_DIR}
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install wheel setuptools pytest
+          pip install -r requirements.txt
+          python -m localstack.services.install libs
+          python -m localstack.services.install testlibs
+          pip uninstall localstack-ext
+          mkdir -p target/reports
