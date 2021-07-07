@@ -33,7 +33,9 @@ jobs:
           ls -la
           env
           which python || true
+          python --version || true
           which python3 || true
+          python3 --version || true          
 
       - name: Checkout localstack
         run: |
@@ -44,13 +46,22 @@ jobs:
 
       - name: Build localstack
         run: |
+          sudo apt-get update
+          sudo apt-get install -y libsasl2-dev python3.8-venv python3.8-dev
+
           cd ${LOCALSTACK_DIR}
           python3 -m venv .venv
           source .venv/bin/activate
           pip install --upgrade pip
           pip install wheel setuptools pytest
           pip install -r requirements.txt
+          pip uninstall localstack-ext
           python -m localstack.services.install libs
           python -m localstack.services.install testlibs
-          pip uninstall localstack-ext
           mkdir -p target/reports
+
+      - name: Run tests
+        run: |
+          cd ${LOCALSTACK_DIR}
+          source .venv/bin/activate
+          DEBUG=1 LOCALSTACK_API_KEY=test PYTEST_ARGS="--junitxml=target/reports/unit.xml -o junit_suite_name='unit'" TEST_PATH='tests/unit' make test
