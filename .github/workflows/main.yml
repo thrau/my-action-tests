@@ -26,16 +26,15 @@ jobs:
           echo ${{ github.workspace }}
           ls -la
           env
-          which python || true
-          python --version || true
           which python3 || true
-          python3 --version || true          
+          which python3.8 || true
+          python3.8 --version
 
       - name: Checkout localstack
         run: |
           git clone https://github.com/localstack/localstack ${LOCALSTACK_DIR}
           cd ${LOCALSTACK_DIR}
-          ln -s ${{ github.workspace }}/localstack_ext .
+          # ln -s ${{ github.workspace }}/localstack_ext .
           ls -la
 
       - name: Build localstack
@@ -50,7 +49,7 @@ jobs:
           pip install --upgrade pip
           pip install wheel setuptools pytest
           pip install -r requirements.txt
-          pip uninstall -y localstack-ext # installed my linking
+          # pip uninstall -y localstack-ext # installed my linking
           python -m localstack.services.install libs
           python -m localstack.services.install testlibs
           mkdir -p target/reports
