@@ -35,4 +35,4 @@ jobs:
           echo ${{ github.workspace }}
           echo $(pwd)
           ls -la
-
+          env
