@@ -55,11 +55,16 @@ jobs:
           mkdir -p target/reports
 
       - name: Run tests
+        env:
+          DEBUG: 1
+          LOCALSTACK_API_KEY: test
+          PYTEST_ARGS: "--junitxml=target/reports/unit.xml -o junit_suite_name='unit'"
+          TEST_PATH: "tests/unit"
         run: |
           cd ${LOCALSTACK_DIR}
           source .venv/bin/activate
-          DEBUG=1 LOCALSTACK_API_KEY=test PYTEST_ARGS="--junitxml=target/reports/unit.xml -o junit_suite_name='unit'" TEST_PATH='tests/unit' make test
-      
+          make test
+
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
