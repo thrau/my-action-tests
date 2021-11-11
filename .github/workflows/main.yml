@@ -24,6 +24,13 @@ jobs:
         with:
           python-version: '3.7'
 
+      - name: Debug
+        run: |
+          ls -la
+          which python
+          python --version
+          ls -la /usr/include/ | grep python
+
       - name: Set up QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v1
