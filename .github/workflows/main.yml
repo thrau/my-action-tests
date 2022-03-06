@@ -1,49 +1,24 @@
-name: Build
+name: CI
 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 jobs:
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+  release:
     runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
-        os: [ubuntu-20.04]
-        python-version: [37, 38]
+        os: [macos-10.15, windows-latest, ubuntu-latest]
 
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions/setup-python@v2
-        name: Install Python
-        with:
-          python-version: '3.7'
+      - name: Check out Git repository
+        uses: actions/checkout@v1
 
       - name: Debug
-        run: |
-          ls -la
-          which python
-          python --version
-          ls -la /usr/include/ | grep python
-
-      - name: Set up QEMU
-        if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: all
-
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.2.2
-        env:
-          # configure cibuildwheel to build native archs ('auto'), and some
-          # emulated ones
-          CIBW_ARCHS_LINUX: auto aarch64
-
-      - uses: actions/upload-artifact@v2
-        with:
-          path: ./wheelhouse/*.whl
+        run: bin/multi-platform.sh
