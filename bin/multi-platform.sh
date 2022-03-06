@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/bin/bash --version
+bash --version
 
 echo "UNAME"
 uname

@@ -21,4 +21,4 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Debug
-        run: bin/multi-platform.sh
+        run: bash bin/multi-platform.sh
