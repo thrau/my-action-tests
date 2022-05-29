@@ -29,6 +29,15 @@ jobs:
       - name: Install
         run: sudo apt-get install tree
 
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: List directory
+        run: |
+          pwd
+          ls -la
+          tree -a
+
   release:
     needs: build
     runs-on: ubuntu-latest
