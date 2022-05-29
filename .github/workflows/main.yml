@@ -26,6 +26,9 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    run:
-      pwd
-      ls -la
+
+    steps:
+      - name: List directory
+        run:
+          pwd
+          ls -la
