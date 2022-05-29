@@ -9,19 +9,25 @@ on:
       - main
 
 jobs:
+  # build:
+  #   runs-on: ${{ matrix.os }}
+
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest]
+
+  #   steps:
+  #     - name: Check out Git repository
+  #       uses: actions/checkout@v1
+
+  #     - name: Debug
+  #       run: bash bin/multi-platform.sh
+
   build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [macos-10.15, windows-latest, ubuntu-latest]
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v1
-
-      - name: Debug
-        run: bash bin/multi-platform.sh
+      - name: Install
+        run: sudo apt-get install tree
 
   release:
     needs: build
@@ -29,6 +35,7 @@ jobs:
 
     steps:
       - name: List directory
-        run:
+        run: |
           pwd
           ls -la
+          tree -a
