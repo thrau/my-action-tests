@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  release:
+  build:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -22,3 +22,10 @@ jobs:
 
       - name: Debug
         run: bash bin/multi-platform.sh
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    run:
+      pwd
+      ls -la
