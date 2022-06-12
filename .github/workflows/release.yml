@@ -37,10 +37,9 @@ jobs:
         run: bin/release-helper.sh explain-steps ${{ inputs.releaseType }}
 
       - name: "Modify files for release version"
-        env:
-          release_ver: ${{ steps.compute-versions.outputs.release }}
         run: |
-          sed -i -r "s/^__version__ = \"(.*)\"/__version__ = \"${release_ver}\"/" */__init__.py
+          bin/release-helper.sh set-ver ${{ steps.compute-versions.outputs.release }}
+          bin/release-helper.sh set-dep-ver "localstack-ext" "==${{ steps.compute-versions.outputs.release }}"
 
       - name: "Create release distribution"
         run: make dist
@@ -67,7 +66,9 @@ jobs:
         env:
           ver: ${{ steps.compute-versions.outputs.develop }}
         run: |
-          sed -i -r "s/^__version__ = \"(.*)\"/__version__ = \"${ver}\"/" */__init__.py
+          bin/release-helper.sh set-ver ${{ steps.compute-versions.outputs.develop }}
+          bin/release-helper.sh set-dep-ver "localstack-ext" ">=${{ steps.compute-versions.outputs.develop }},<${{ steps.compute-versions.outputs.boundary }}"
+
 
       - name: "Commit next development version"
         run: |
