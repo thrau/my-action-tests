@@ -21,8 +21,8 @@ jobs:
 
       - name: "Prepare git config"
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "localstack[bot]"
+          git config user.email "localstack-bot@users.noreply.github.com"
 
       - name: "Compute release versions"
         id: compute-versions
@@ -68,7 +68,6 @@ jobs:
         run: |
           bin/release-helper.sh set-ver ${{ steps.compute-versions.outputs.develop }}
           bin/release-helper.sh set-dep-ver "localstack-ext" ">=${{ steps.compute-versions.outputs.develop }},<${{ steps.compute-versions.outputs.boundary }}"
-
 
       - name: "Commit next development version"
         run: |
