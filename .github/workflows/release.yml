@@ -48,23 +48,19 @@ jobs:
         run: echo "make upload"
 
       - name: "Commit release version"
-        env:
-          release_ver: ${{ steps.compute-versions.outputs.release }}
         run: |
+          ver=${{ steps.compute-versions.outputs.release }}
           git add */__init__.py setup.cfg
-          git commit -m "release version ${release_ver}"
-          git tag -a "v${release_ver}" -m "Release version ${release_ver}"
+          git commit -m "release version ${ver}"
+          git tag -a "v${ver}" -m "Release version ${ver}"
           git push && git push --tags
 
       - name: "Create GitHub release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          release_ver: ${{ steps.compute-versions.outputs.release }}
-        run: gh release create "v${release_ver}" --generate-notes --draft
+        run: gh release create "v${{ steps.compute-versions.outputs.release }}" --generate-notes --draft
 
       - name: "Modify files for next development version"
-        env:
-          ver: ${{ steps.compute-versions.outputs.develop }}
         run: |
           bin/release-helper.sh set-ver ${{ steps.compute-versions.outputs.develop }}
           bin/release-helper.sh set-dep-ver "localstack-ext" ">=${{ steps.compute-versions.outputs.develop }},<${{ steps.compute-versions.outputs.boundary }}"
