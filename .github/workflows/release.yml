@@ -60,6 +60,9 @@ jobs:
           git tag -a "v${release_ver}" -m "Release version ${release_ver}"
           echo "git push && git push --tags"
 
+      - name: "Create GitHub release"
+        run: gh release list
+
       - name: "Prepare next development iteration"
         env:
           ver: ${{ steps.compute-versions.outputs.develop }}
@@ -75,3 +78,5 @@ jobs:
       - name: "Git Log"
         run: |
           git log --oneline -n 4
+          git show HEAD~1
+          git show HEAD
