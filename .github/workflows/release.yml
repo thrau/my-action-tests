@@ -37,7 +37,7 @@ jobs:
         # ::set-output name=boundary::${BOUNDARY_VER}
 
       - name: "Explain release steps"
-        run: bin/release.sh explain-steps ${RELEASE_TYPE}
+        run: bin/release.sh explain-steps ${{ inputs.releaseType }}
 
       - name: "Prepare release version"
         env:
