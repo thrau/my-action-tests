@@ -40,7 +40,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit "Release version v?"
+          git commit -m "Release version v?"
           git push
       
       - name: "Git Log"
