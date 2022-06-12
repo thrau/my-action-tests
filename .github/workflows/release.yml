@@ -61,6 +61,8 @@ jobs:
           echo "git push && git push --tags"
 
       - name: "Create GitHub release"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release list
 
       - name: "Prepare next development iteration"
