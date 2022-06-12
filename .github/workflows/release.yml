@@ -58,12 +58,13 @@ jobs:
           git add */__init__.py setup.cfg
           git commit -m "Release version ${release_ver}"
           git tag -a "v${release_ver}" -m "Release version ${release_ver}"
-          echo "git push && git push --tags"
+          git push && git push --tags
 
       - name: "Create GitHub release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release list
+          release_ver: ${{ steps.compute-versions.outputs.release }}
+        run: gh release create "v${release_ver}" --generate-notes --draft
 
       - name: "Prepare next development iteration"
         env:
@@ -75,7 +76,7 @@ jobs:
         run: |
           git add */__init__.py setup.cfg
           git commit -m "Prepare next development iteration"
-          echo "git push"
+          git push
 
       - name: "Git Log"
         run: |

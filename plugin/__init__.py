@@ -11,7 +11,7 @@ from .manager import PluginManager, PluginSpecResolver
 
 name = "plugin"
 
-__version__ = "0.14.4.dev"
+__version__ = "0.0.1.dev"
 
 __all__ = [
     "Plugin",
