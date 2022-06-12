@@ -4,15 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       releaseType:
-        description: 'Release type'
-        default: 'dev'
+        description: "Release type"
+        default: "patch"
         type: choice
         options:
-        - dev
         - patch
         - minor
         - major
-
 
 jobs:
   run:
@@ -21,6 +19,11 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v2
 
+      - name: "Prepare git config"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: "Compute release versions"
         id: compute-versions
         env:
@@ -28,23 +31,39 @@ jobs:
         run: |
           bin/release.sh save-env ${RELEASE_TYPE}
           bin/release.sh github-outputs
+        # the github outputs are:
+        # ::set-output name=current::${CURRENT_VER}
+        # ::set-output name=release::${RELEASE_VER}
+        # ::set-output name=develop::${DEVELOP_VER}
+        # ::set-output name=boundary::${BOUNDARY_VER}
 
       - name: "Explain release steps"
-        run: |
-          bin/release.sh explain-steps
+        run: bin/release.sh explain-steps
 
-      - name: "Prepare release versions"
+      - name: "Prepare release version"
         run: |
           sed -i -r "s/^__version__ = \"(.*)\"/__version__ = \"${{ steps.compute-versions.outputs.release }}\"/" plugin/__init__.py
 
-      # - name: "Commit release version"
-      #   run: |
-      #     git config user.name "github-actions[bot]"
-      #     git config user.email "github-actions[bot]@users.noreply.github.com"
-      #     git add .
-      #     git commit -m "Release version v?"
-      #     git push
-      
+      - name: "Create release distribution"
+        run: make dist
+
+      - name: "Commit release version"
+        run: |
+          git add */__init__.py setup.cfg
+          git commit -m "Release version ${{ steps.compute-versions.outputs.release }}"
+          git tag -a "v${{ steps.compute-versions.outputs.release }}" -m "Release version ${{ steps.compute-versions.outputs.release }}"
+          echo "git push && git push --tags"
+
+      - name: "Prepare next development iteration"
+        run: |
+          sed -i -r "s/^__version__ = \"(.*)\"/__version__ = \"${{ steps.compute-versions.outputs.develop }}\"/" plugin/__init__.py
+
+      - name: "Commit next development version"
+        run: |
+          git add */__init__.py setup.cfg
+          git commit -m "Prepare next development iteration"
+          echo "git push"
+
       - name: "Git Log"
         run: |
-          git log -n 2
+          git log -n 3
