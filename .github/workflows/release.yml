@@ -22,16 +22,20 @@ jobs:
         uses: actions/checkout@v2
 
       - name: "Compute release versions"
+        id: compute-versions
         env:
           RELEASE_TYPE: ${{ inputs.releaseType }}
         run: |
           bin/release.sh save-env ${RELEASE_TYPE}
+          bin/release.sh github-outputs
 
       - name: "Explain release steps"
-        env:
-          RELEASE_TYPE: ${{ inputs.releaseType }}
         run: |
           bin/release.sh explain-steps
+
+      - name: "Prepare release versions"
+        run: |
+          sed -i -r "s/^__version__ = \"(.*)\"/__version__ = \"${{ steps.compute-versions.outputs.release }}\"/" plugin/__init__.py
 
       # - name: "Commit release version"
       #   run: |
