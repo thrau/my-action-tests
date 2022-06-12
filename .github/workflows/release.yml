@@ -13,7 +13,7 @@ on:
         - major
 
 jobs:
-  release-localstack-ext:
+  release-localstack:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
@@ -26,10 +26,7 @@ jobs:
 
       - name: "Compute release versions"
         id: compute-versions
-        env:
-          RELEASE_TYPE: ${{ inputs.releaseType }}
-        run: |
-          bin/release.sh github-outputs ${RELEASE_TYPE}
+        run: bin/release-helper.sh github-outputs ${{ inputs.releaseType }}
         # the github outputs are:
         # ::set-output name=current::${CURRENT_VER}
         # ::set-output name=release::${RELEASE_VER}
@@ -37,9 +34,9 @@ jobs:
         # ::set-output name=boundary::${BOUNDARY_VER}
 
       - name: "Explain release steps"
-        run: bin/release.sh explain-steps ${{ inputs.releaseType }}
+        run: bin/release-helper.sh explain-steps ${{ inputs.releaseType }}
 
-      - name: "Prepare release version"
+      - name: "Modify files for release version"
         env:
           release_ver: ${{ steps.compute-versions.outputs.release }}
         run: |
@@ -56,7 +53,7 @@ jobs:
           release_ver: ${{ steps.compute-versions.outputs.release }}
         run: |
           git add */__init__.py setup.cfg
-          git commit -m "Release version ${release_ver}"
+          git commit -m "release version ${release_ver}"
           git tag -a "v${release_ver}" -m "Release version ${release_ver}"
           git push && git push --tags
 
@@ -66,7 +63,7 @@ jobs:
           release_ver: ${{ steps.compute-versions.outputs.release }}
         run: gh release create "v${release_ver}" --generate-notes --draft
 
-      - name: "Prepare next development iteration"
+      - name: "Modify files for next development version"
         env:
           ver: ${{ steps.compute-versions.outputs.develop }}
         run: |
@@ -75,7 +72,7 @@ jobs:
       - name: "Commit next development version"
         run: |
           git add */__init__.py setup.cfg
-          git commit -m "Prepare next development iteration"
+          git commit -m "prepare next development iteration"
           git push
 
       - name: "Git Log"
