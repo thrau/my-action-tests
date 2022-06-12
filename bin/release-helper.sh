@@ -9,12 +9,25 @@ function usage() {
     echo "A set of commands that facilitate release automation"
     echo ""
     echo "USAGE"
-    echo "  release-helper <command> [<patch|minor|major>]"
+    echo "  release-helper <command> [options]"
     echo ""
     echo "Commands:"
-    echo "  github-outputs  print version number outputs for github actions"
-    echo "  explain-steps   print a list of steps that should be executed for the release type"
-    echo "  help            show this message"
+    echo "  github-outputs <patch|minor|major>"
+    echo "      print version number outputs for github actions"
+    echo ""
+    echo "  explain-steps <patch|minor|major>"
+    echo "      print a list of steps that should be executed for the release type"
+    echo ""
+    echo "  set-ver <version-number>"
+    echo "      sets the version number in the version file"
+    echo "      example: set-ver 0.15.0"
+    echo ""
+    echo "  set-dep-ver <dep> <range>"
+    echo "      set the dependency version in the dependency file"
+    echo "      example: set-dep-ver 'localstack-ext' '==0.15.0'"
+    echo ""
+    echo "  help"
+    echo "      show this message"
 }
 
 function get_current_version() {
@@ -69,10 +82,10 @@ function release_env_compute() {
 
     export CURRENT_VER=$(get_current_version)
     export RELEASE_VER=${RELEASE_VER}
-    export DEVELOP_VER=$(echo ${release_ver} | increment_patch | add_dev_suffix)
-    export BOUNDARY_VER=$(echo ${develop_ver} | increment_patch)
+    export DEVELOP_VER=$(echo ${RELEASE_VER} | increment_patch | add_dev_suffix)
+    export BOUNDARY_VER=$(echo ${DEVELOP_VER} | increment_patch)
 
-    release_env_validate
+    release_env_validate || { echo "invalid release environment"; exit 1; }
 }
 
 function release_env_validate() {
@@ -104,22 +117,49 @@ function print_github_outputs() {
     echo "::set-output name=boundary::${BOUNDARY_VER}"
 }
 
+# commands
+
+function cmd-set-ver() {
+    [[ $# -eq 1 ]] || { usage; exit 1; }
+
+    ver=$1
+    sed -i -r "s/^__version__ = \"(.*)\"/__version__ = \"${ver}\"/" ${VERSION_FILE}
+}
+
+function cmd-explain-steps() {
+    release_env_compute $1
+    explain_release_steps
+}
+
+function cmd-github-outputs() {
+    release_env_compute $1
+    print_github_outputs
+}
+
+function cmd-set-dep-ver() {
+    [[ $# -eq 2 ]] || { usage; exit 1; }
+
+    dep=$1
+    ver=$2
+
+    egrep "^(\s+)${dep}(\[[a-zA-Z0-9]+\])?(>|=|<)(.*)" ${DEPENDENCY_FILE} || { echo "dependency ${dep} not found in ${DEPENDENCY_FILE}"; return 1; }
+    sed -i -r "s/^(\s+)(${dep})(\[[a-zA-Z0-9,]+\])?(>|=|<)(.*)/\1\2\3${ver}/g" ${DEPENDENCY_FILE}
+}
+
 function main() {
     [[ $# -lt 1 ]] && { usage; exit 1; }
 
-    cmd=$1
+    command_name=$1
     shift
 
-    [[ $cmd == "help" ]] && { usage; exit 0; }
-
-    release_env_compute $1
-    release_env_validate
-
-    case $cmd in
-        "help")             usage ;;
-        "github-outputs")   print_github_outputs ;;
-        "explain-steps")    explain_release_steps ;;
-        *)                  usage && exit 1 ;;
+    # invoke command
+    case $command_name in
+        "set-ver")          cmd-set-ver "$@"        ;;
+        "set-dep-ver")      cmd-set-dep-ver "$@"    ;;
+        "github-outputs")   cmd-github-outputs "$@" ;;
+        "explain-steps")    cmd-explain-steps "$@"  ;;
+        "help")             usage && exit 0         ;;
+        *)                  usage && exit 1         ;;
     esac
 }
 
