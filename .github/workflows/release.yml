@@ -40,7 +40,7 @@ jobs:
         env:
           release_ver: ${{ steps.compute-versions.outputs.release }}
         run: |
-          sed -i -r "s/^__version__ = \"(.*)\"/__version__ = \"${release_ver}\"/" plugin/__init__.py
+          sed -i -r "s/^__version__ = \"(.*)\"/__version__ = \"${release_ver}\"/" */__init__.py
 
       - name: "Create release distribution"
         run: make dist
@@ -67,7 +67,7 @@ jobs:
         env:
           ver: ${{ steps.compute-versions.outputs.develop }}
         run: |
-          sed -i -r "s/^__version__ = \"(.*)\"/__version__ = \"${ver}\"/" plugin/__init__.py
+          sed -i -r "s/^__version__ = \"(.*)\"/__version__ = \"${ver}\"/" */__init__.py
 
       - name: "Commit next development version"
         run: |
