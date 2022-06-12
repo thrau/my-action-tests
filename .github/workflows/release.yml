@@ -21,27 +21,25 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v2
 
-      - name: "Log environment"
+      - name: "Compute release versions"
         env:
           RELEASE_TYPE: ${{ inputs.releaseType }}
         run: |
-          echo "Release type: ${RELEASE_TYPE}"
-          echo "Github Actor: ${GITHUB_ACTOR}"
-          echo "Githu Ref: ${GITHUB_REF}"
+          bin/release.sh save-env ${RELEASE_TYPE}
 
-      - name: "Increment release"
+      - name: "Explain release steps"
         env:
           RELEASE_TYPE: ${{ inputs.releaseType }}
         run: |
-          echo "${RELEASE_TYPE}" >> CHANGELOG
+          bin/release.sh explain-steps
 
-      - name: "Commit release version"
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Release version v?"
-          git push
+      # - name: "Commit release version"
+      #   run: |
+      #     git config user.name "github-actions[bot]"
+      #     git config user.email "github-actions[bot]@users.noreply.github.com"
+      #     git add .
+      #     git commit -m "Release version v?"
+      #     git push
       
       - name: "Git Log"
         run: |
