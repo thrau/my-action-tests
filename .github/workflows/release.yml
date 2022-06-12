@@ -41,6 +41,8 @@ jobs:
           # Optional. Commit message for the created commit.
           # Defaults to "Apply automatic changes"
           commit_message: "Release version v"
+          create_branch: true
+          branch: release-test
 
           add_options: '--all'
 
