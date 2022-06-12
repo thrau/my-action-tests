@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: 'Release type'
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - patch
+        - minor
+        - major
+
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: "Log it"
+        env:
+          RELEASE_TYPE: ${{ inputs.releaseType }}
+          TAGS: ${{ inputs.tags }}
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "Release type: ${RELEASE_TYPE}"
+          echo "Github Actor: ${GITHUB_ACTOR}"
+          echo "Githu Ref: ${GITHUB_REF}"
