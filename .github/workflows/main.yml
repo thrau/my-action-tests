@@ -22,3 +22,6 @@ jobs:
 
       - name: Debug
         run: bash bin/multi-platform.sh
+
+      - name: Check Docker Env
+        run: docker run --rm ubuntu bash -c 'env'
